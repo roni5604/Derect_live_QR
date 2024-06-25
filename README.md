@@ -25,8 +25,8 @@ This project aims to provide a tool for analyzing QR codes in both live video st
 1. **Clone the Repository**
 
    ```bash
-   git clone https://github.com/yourusername/qr-code-analysis.git
-   cd qr-code-analysis
+   git clone https://github.com/roni5604/Derect_live_QR.git
+   cd Derect_live_QR
    ```
 
 2. **Install Dependencies**

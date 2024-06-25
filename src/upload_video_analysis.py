@@ -143,7 +143,7 @@ def show_output_video(output_video_path_result):
     cv2.destroyAllWindows()
 
 def start_analysis(source):
-    output_video_path, csv_path, _ = setup_paths()
+    output_video_path, csv_path, _, _ = setup_paths()
 
     with open(csv_path, mode='w', newline='') as csv_file:
         csv_writer = csv.writer(csv_file)
