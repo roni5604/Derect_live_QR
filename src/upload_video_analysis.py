@@ -8,6 +8,7 @@ from utils import setup_paths  # Import setup_paths from utils.py
 # Constants
 ARUCO_MARKER_SIZE = 0.05  # Size of the Aruco marker in meters
 # Camera calibration parameters for the camera used to capture the video
+# need to be change with the real camera calibration parameters!!!!!
 CAMERA_MATRIX = np.array([[921.170702, 0.000000, 459.904354],
                           [0.000000, 919.018377, 351.238301],
                           [0.000000, 0.000000, 1.000000]])
@@ -19,6 +20,7 @@ def initialize_video_capture(input_video_path):
         logging.error("Cannot open video file")
         raise IOError("Cannot open video file")
     logging.info("Video capture initialized.")
+    logging.info(f"Video Name: {input_video_path}")
     return cap
 
 def setup_video_writer(cap, output_video_path):
