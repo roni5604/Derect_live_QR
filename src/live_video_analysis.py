@@ -63,18 +63,30 @@ def draw_controls(frame, direction):
     thickness = 6
     arrow_length = 100
 
-    if direction == "right":
+    if direction == "turn_right":
         cv2.arrowedLine(frame, (w - 120, h // 2), (w - 120 + arrow_length, h // 2), arrow_color, thickness, tipLength=0.5)
         cv2.putText(frame, "Turn Right", (w - 300, h // 2 - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, arrow_color, 3)
-    elif direction == "left":
+    elif direction == "turn_left":
         cv2.arrowedLine(frame, (120, h // 2), (120 - arrow_length, h // 2), arrow_color, thickness, tipLength=0.5)
         cv2.putText(frame, "Turn Left", (200, h // 2 - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, arrow_color, 3)
-    elif direction == "up":
+    elif direction == "turn_up":
         cv2.arrowedLine(frame, (w // 2, 120), (w // 2, 120 - arrow_length), arrow_color, thickness, tipLength=0.5)
         cv2.putText(frame, "Turn Up", (w // 2 - 70, 180), cv2.FONT_HERSHEY_SIMPLEX, 1, arrow_color, 3)
-    elif direction == "down":
+    elif direction == "turn_down":
         cv2.arrowedLine(frame, (w // 2, h - 120), (w // 2, h - 120 + arrow_length), arrow_color, thickness, tipLength=0.5)
         cv2.putText(frame, "Turn Down", (w // 2 - 100, h - 140), cv2.FONT_HERSHEY_SIMPLEX, 1, arrow_color, 3)
+    elif direction == "move_left":
+        cv2.arrowedLine(frame, (120, h // 2), (120 - arrow_length, h // 2), arrow_color, thickness, tipLength=0.5)
+        cv2.putText(frame, "Move Left", (200, h // 2 - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, arrow_color, 3)
+    elif direction == "move_right":
+        cv2.arrowedLine(frame, (w - 120, h // 2), (w - 120 + arrow_length, h // 2), arrow_color, thickness, tipLength=0.5)
+        cv2.putText(frame, "Move Right", (w - 300, h // 2 - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, arrow_color, 3)
+    elif direction == "move_forward":
+        cv2.arrowedLine(frame, (w // 2, 120), (w // 2, 120 - arrow_length), arrow_color, thickness, tipLength=0.5)
+        cv2.putText(frame, "Move Forward", (w // 2 - 70, 180), cv2.FONT_HERSHEY_SIMPLEX, 1, arrow_color, 3)
+    elif direction == "move_backward":
+        cv2.arrowedLine(frame, (w // 2, h - 120), (w // 2, h - 120 + arrow_length), arrow_color, thickness, tipLength=0.5)
+        cv2.putText(frame, "Move Backward", (w // 2 - 100, h - 140), cv2.FONT_HERSHEY_SIMPLEX, 1, arrow_color, 3)
 
 
 def process_live_video(source, csv_writer, out):
@@ -119,13 +131,13 @@ def process_live_video(source, csv_writer, out):
             draw_controls(frame, direction)
             direction = None  # Reset direction after drawing
 
-        controls_img = np.zeros((300, frame.shape[1], 3), dtype=np.uint8)  # Increased height for controls section
+        controls_img = np.zeros((320, frame.shape[1], 3), dtype=np.uint8)  # Increased height for controls section
         cv2.putText(controls_img, "Controls", (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 255, 255), 2)
         cv2.putText(controls_img, "- Exit: Press 'q' or 'e'", (10, 80), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 1)
-        cv2.putText(controls_img, "- Step Right: Press 'd'", (10, 120), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 1)
-        cv2.putText(controls_img, "- Step Left: Press 'a'", (10, 160), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 1)
-        cv2.putText(controls_img, "- Step Up: Press 'w'", (10, 200), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 1)
-        cv2.putText(controls_img, "- Step Down: Press 's'", (10, 240), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 1)
+        cv2.putText(controls_img, "- Turn Right: Press 'd'  |  Move Right: Press 'l'", (10, 120), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 1)
+        cv2.putText(controls_img, "- Turn Left: Press 'a'  |  Move Left: Press 'j'", (10, 160), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 1)
+        cv2.putText(controls_img, "- Turn Up: Press 'w'  |  Move Forward: Press 'o'", (10, 200), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 1)
+        cv2.putText(controls_img, "- Turn Down: Press 's'  |  Move Backward: Press 'k'", (10, 240), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 1)
         cv2.putText(controls_img, "- Save Frame: Press 'p'", (10, 280), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 1)
 
         # Create a larger combined image for display
@@ -140,13 +152,21 @@ def process_live_video(source, csv_writer, out):
         if key == ord('q') or key == ord('e'):
             break
         elif key == ord('d'):
-            direction = "right"
+            direction = "turn_right"
         elif key == ord('a'):
-            direction = "left"
+            direction = "turn_left"
         elif key == ord('w'):
-            direction = "up"
+            direction = "turn_up"
         elif key == ord('s'):
-            direction = "down"
+            direction = "turn_down"
+        elif key == ord('l'):
+            direction = "move_right"
+        elif key == ord('j'):
+            direction = "move_left"
+        elif key == ord('o'):
+            direction = "move_forward"
+        elif key == ord('k'):
+            direction = "move_backward"
         elif key == ord('p'):
             cv2.imwrite(target_frame_path, frame)
             logging.info(f"Saved current frame as {target_frame_path}")
