@@ -119,4 +119,4 @@ This project is licensed under the MIT License.
 - Roni Michaeli
 - Elor Israeli
 - Naor Ladani
-- Roi Asraf
+- Roy Asraf
