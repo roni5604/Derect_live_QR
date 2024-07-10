@@ -9,12 +9,13 @@ from utils import setup_paths
 
 # Constants
 ARUCO_MARKER_SIZE = 0.05  # Size of the Aruco marker in meters
-# Camera calibration parameters for the camera used to capture the video
-CAMERA_MATRIX = np.array([[950.0, 0.0, 640.0],
-                          [0.0, 950.0, 360.0],
+# Camera calibration parameters for macbook pro camera
+CAMERA_MATRIX = np.array([[1500.0, 0.0, 960.0],
+                          [0.0, 1500.0, 540.0],
                           [0.0, 0.0, 1.0]])
 
 DISTORTION_COEFFICIENTS = np.array([0.1, -0.25, 0.001, 0.0, 0.0])
+
 
 # Globals
 sleep_bool = True
@@ -40,21 +41,40 @@ def draw_annotations(frame, corners, ids, distances, yaw_angles, specific_id=Non
 
 
 def calculate_pose_and_distance(corners):
-    rotation_vec, translation_vec, _ = cv2.aruco.estimatePoseSingleMarkers(corners, ARUCO_MARKER_SIZE, CAMERA_MATRIX,
-                                                                           DISTORTION_COEFFICIENTS)
+    # Define the object points for the Aruco marker
+    obj_points = np.array([
+        [-ARUCO_MARKER_SIZE / 2, -ARUCO_MARKER_SIZE / 2, 0],
+        [ARUCO_MARKER_SIZE / 2, -ARUCO_MARKER_SIZE / 2, 0],
+        [ARUCO_MARKER_SIZE / 2, ARUCO_MARKER_SIZE / 2, 0],
+        [-ARUCO_MARKER_SIZE / 2, ARUCO_MARKER_SIZE / 2, 0]
+    ])
+
+    # Convert corners to the correct shape
+    img_points = corners[0].reshape(-1, 2)
+
+    # SolvePnP to get the rotation and translation vectors
+    success, rotation_vec, translation_vec = cv2.solvePnP(obj_points, img_points, CAMERA_MATRIX, DISTORTION_COEFFICIENTS)
+
+    if not success:
+        raise ValueError("Pose estimation failed")
+
+    # Calculate distance as the norm of the translation vector
     distance = np.linalg.norm(translation_vec)
-    yaw_angle = np.arctan2(translation_vec[0][0][0], translation_vec[0][0][2])
+
+    # Calculate yaw angle in degrees
+    yaw_angle = np.arctan2(translation_vec[0][0], translation_vec[2][0])
     yaw_angle_degrees = np.degrees(yaw_angle)
     yaw_angle_degrees = (yaw_angle_degrees + 180) % 360 - 180  # Normalize to -180 to 180 degrees
 
     # Convert rotation vector to rotation matrix
-    matrix_rotation_vec, _ = cv2.Rodrigues(rotation_vec[0][0])
+    matrix_rotation_vec, _ = cv2.Rodrigues(rotation_vec)
 
     # Calculate pitch, yaw, and roll from the rotation matrix
     pitch_angle = np.degrees(np.arctan2(matrix_rotation_vec[1, 0], matrix_rotation_vec[0, 0]))
     roll_angle = np.degrees(np.arctan2(matrix_rotation_vec[2, 1], matrix_rotation_vec[2, 2]))
 
     return distance, yaw_angle_degrees, pitch_angle, roll_angle, translation_vec, rotation_vec
+
 
 
 def draw_controls(frame, direction):
