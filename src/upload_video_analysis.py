@@ -7,8 +7,7 @@ from utils import setup_paths  # Import setup_paths from utils.py
 
 # Constants
 ARUCO_MARKER_SIZE = 0.05  # Size of the Aruco marker in meters
-# Camera calibration parameters for the camera used to capture the video
-# need to be change with the real camera calibration parameters!!!!!
+# Camera calibration parameters for the camera used to capture the video from drone
 CAMERA_MATRIX = np.array([[921.170702, 0.000000, 459.904354],
                           [0.000000, 919.018377, 351.238301],
                           [0.000000, 0.000000, 1.000000]])
